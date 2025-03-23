@@ -3,19 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>mkb</title>
+    <meta name="description" content="Portfolio website of Mohammad Kaleem - Developer, AI Engineer, and Cloud Enthusiast">
+    <title>Mohammad Kaleem - Portfolio</title>
+    <!-- Preload critical CSS -->
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <script defer src="./script.js"></script>
+    <!-- Load Font Awesome asynchronously -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" media="print" onload="this.media='all'">
+    <!-- Add fallback in case JS is disabled -->
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"></noscript>
+    <!-- Defer non-critical JS -->
+    <script src="./script.js" defer></script>
+    
+    <!-- Preconnect to CDN for faster loading -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    
+    <!-- Add metadata for SEO -->
+    <meta name="keywords" content="portfolio, web development, programming, python, javascript, developer">
+    <meta name="author" content="Mohammad Kaleem">
+    <meta name="theme-color" content="#0f0f2d">
 </head>
 <body class="dark-mode">
+    <!-- Page loading indicator -->
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-spinner"></div>
+    </div>
+
     <!-- Scroll Indicator -->
     <div class="scroll-indicator" id="scrollIndicator"></div>
 
     <!-- Scroll to Top Button -->
-    <div class="scroll-top" id="scrollTop">
+    <button class="scroll-top" id="scrollTop" aria-label="Scroll to top">
         <i class="fas fa-arrow-up"></i>
-    </div>
+    </button>
 
     <!-- Floating Background Elements -->
     <div class="floating-background" id="floating-background"></div>
@@ -23,297 +42,299 @@
     <!-- Header Navigation -->
     <header>
         <nav>
-            <h2 class="logo">Portfolio</h2>
+            <h1 class="logo">Portfolio</h1>
             <ul class="nav-links">
                 <li><a href="#home">Home</a></li>
                 <li><a href="#about">About</a></li>
                 <li><a href="#projects">Projects</a></li>
                 <li><a href="#skills">Skills</a></li>
                 <li><a href="#contact">Contact</a></li>
-                <li><button id="themeToggle">☀️</button></li>
+                <li><button id="themeToggle" aria-label="Toggle theme">☀️</button></li>
             </ul>
         </nav>
     </header>
 
-    <!-- Home Section -->
-    <section id="home">
-        <div class="home-content">
-            <div class="neon-text-container">
-                <h1>Hi, I'm <span class="highlight-text">Mohammad Kaleem</span></h1>
-                <p class="typing-text">A passionate developer with expertise in <span class="neon-highlight">Python</span>, <span class="neon-highlight">Web Development</span>, and <span class="neon-highlight">DevOps</span>.</p>
+    <main>
+        <!-- Home Section -->
+        <section id="home" class="animation-container">
+            <div class="home-content">
+                <div class="neon-text-container">
+                    <h1>Hi, I'm <span class="highlight-text">Mohammad Kaleem</span></h1>
+                    <p class="typing-text">A passionate developer with expertise in <span class="neon-highlight">Python</span>, <span class="neon-highlight">Web Development</span>, and <span class="neon-highlight">DevOps</span>.</p>
+                </div>
+                <div class="neon-shape"></div>
+                <a href="#projects" class="btn">View My Work</a>
+                <div class="neon-grid"></div>
             </div>
-            <div class="neon-shape"></div>
-            <a href="#projects" class="btn">View My Work</a>
-            <div class="neon-grid"></div>
-        </div>
-    </section>
+        </section>
 
-    <!-- About Section -->
-    <section id="about">
-        <h2>About Me</h2>
-        <div class="about-container">
-            <div class="about-image">
-                <div class="profile-img-placeholder">
-                    <div class="neon-bg profile-img" style="background: radial-gradient(circle, #00eeff, #ff00c8); display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">
-                        <i class="fas fa-user" style="font-size: 5rem; color: white; text-shadow: 0 0 10px #fff;"></i>
+        <!-- About Section -->
+        <section id="about" class="animation-container">
+            <h2>About Me</h2>
+            <div class="about-container">
+                <div class="about-image">
+                    <div class="profile-img-placeholder">
+                        <div class="neon-bg profile-img" style="background: radial-gradient(circle, #00eeff, #ff00c8); display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">
+                            <i class="fas fa-user" style="font-size: 5rem; color: white; text-shadow: 0 0 10px #fff;"></i>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="about-content">
-                <p class="about-intro"><span class="highlight">Computer Science professional</span> with a passion for programming and cloud technologies.</p>
-                <p>I enjoy solving complex problems and creating efficient solutions. My journey in technology has been driven by curiosity and a desire to make an impact through innovative solutions.</p>
-                <div class="about-details">
-                    <div class="about-item">
-                        <i class="fas fa-graduation-cap"></i>
-                        <span>B.Tech in Computer Science</span>
+                <div class="about-content">
+                    <p class="about-intro"><span class="highlight">Computer Science professional</span> with a passion for programming and cloud technologies.</p>
+                    <p>I enjoy solving complex problems and creating efficient solutions. My journey in technology has been driven by curiosity and a desire to make an impact through innovative solutions.</p>
+                    <div class="about-details">
+                        <div class="about-item">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>B.Tech in Computer Science</span>
+                        </div>
+                        <div class="about-item">
+                            <i class="fas fa-laptop-code"></i>
+                            <span>Full-Stack Developer</span>
+                        </div>
+                        <div class="about-item">
+                            <i class="fas fa-cloud"></i>
+                            <span>Cloud Enthusiast</span>
+                        </div>
                     </div>
-                    <div class="about-item">
-                        <i class="fas fa-laptop-code"></i>
-                        <span>Full-Stack Developer</span>
-                    </div>
-                    <div class="about-item">
-                        <i class="fas fa-cloud"></i>
-                        <span>Cloud Enthusiast</span>
-                    </div>
+                    <p>When I'm not coding, I enjoy exploring new technologies, contributing to open-source projects, and expanding my knowledge in the ever-evolving tech landscape.</p>
                 </div>
-                <p>When I'm not coding, I enjoy exploring new technologies, contributing to open-source projects, and expanding my knowledge in the ever-evolving tech landscape.</p>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Projects Section -->
-    <section id="projects">
-        <h2>Projects</h2>
-        <div class="project-card">
-            <div class="project-img-container">
-                <div class="neon-bg project-img" style="background: linear-gradient(135deg, #ff00c8, #00eeff); display: flex; align-items: center; justify-content: center;">
-                    <i class="fas fa-hard-hat" style="font-size: 5rem; color: white; text-shadow: 0 0 10px #fff;"></i>
+        <!-- Projects Section - Optimize content loading -->
+        <section id="projects" class="animation-container">
+            <h2>Projects</h2>
+            <div class="project-card">
+                <div class="project-img-container">
+                    <div class="neon-bg project-img" style="background: linear-gradient(135deg, #ff00c8, #00eeff); display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-hard-hat" style="font-size: 5rem; color: white; text-shadow: 0 0 10px #fff;"></i>
+                    </div>
                 </div>
-            </div>
-            <div class="project-content">
-                <h3>PPE Detection</h3>
-                <p>Uses AI to detect personal protective equipment in real-time. Built with Python, OpenCV, and TensorFlow to enhance workplace safety by monitoring proper use of safety equipment.</p>
-                <div class="project-tags">
-                    <span>Python</span>
-                    <span>AI</span>
-                    <span>Computer Vision</span>
-                </div>
-            </div>
-            <button class="view-project">View Project <i class="fas fa-arrow-right"></i></button>
-        </div>
-        <div class="project-card">
-            <div class="project-img-container">
-                <div class="neon-bg project-img" style="background: linear-gradient(135deg, #00ffbb, #ff00c8); display: flex; align-items: center; justify-content: center;">
-                    <i class="fas fa-laptop-code" style="font-size: 5rem; color: white; text-shadow: 0 0 10px #fff;"></i>
-                </div>
-            </div>
-            <div class="project-content">
-                <h3>Personal Portfolio</h3>
-                <p>Designed an elegant and user-friendly personal portfolio website using HTML, CSS, and JavaScript with responsive design principles and dark mode functionality.</p>
-                <div class="project-tags">
-                    <span>HTML/CSS</span>
-                    <span>JavaScript</span>
-                    <span>Responsive Design</span>
-                </div>
-            </div>
-            <button class="view-project">View Project <i class="fas fa-arrow-right"></i></button>
-        </div>
-    </section>
-
-    <!-- Skills Section -->
-    <section id="skills">
-        <h2>Skills</h2>
-        <div class="skills-grid">
-            <div class="skill-category">
-                <h3><i class="fas fa-code"></i> Programming</h3>
-                <div class="skill-item">
-                    <div class="skill-info">
+                <div class="project-content">
+                    <h3>PPE Detection</h3>
+                    <p>Uses AI to detect personal protective equipment in real-time. Built with Python, OpenCV, and TensorFlow to enhance workplace safety by monitoring proper use of safety equipment.</p>
+                    <div class="project-tags">
                         <span>Python</span>
-                        <span class="skill-level">90%</span>
-                    </div>
-                    <div class="skill-progress" data-width="90%">
-                        <div class="skill-progress-bar"></div>
+                        <span>AI</span>
+                        <span>Computer Vision</span>
                     </div>
                 </div>
-                <div class="skill-item">
-                    <div class="skill-info">
+                <button class="view-project">View Project <i class="fas fa-arrow-right"></i></button>
+            </div>
+            <div class="project-card">
+                <div class="project-img-container">
+                    <div class="neon-bg project-img" style="background: linear-gradient(135deg, #00ffbb, #ff00c8); display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-laptop-code" style="font-size: 5rem; color: white; text-shadow: 0 0 10px #fff;"></i>
+                    </div>
+                </div>
+                <div class="project-content">
+                    <h3>Personal Portfolio</h3>
+                    <p>Designed an elegant and user-friendly personal portfolio website using HTML, CSS, and JavaScript with responsive design principles and dark mode functionality.</p>
+                    <div class="project-tags">
+                        <span>HTML/CSS</span>
                         <span>JavaScript</span>
-                        <span class="skill-level">85%</span>
-                    </div>
-                    <div class="skill-progress" data-width="85%">
-                        <div class="skill-progress-bar"></div>
+                        <span>Responsive Design</span>
                     </div>
                 </div>
-                <div class="skill-item">
-                    <div class="skill-info">
-                        <span>Java</span>
-                        <span class="skill-level">75%</span>
-                    </div>
-                    <div class="skill-progress" data-width="75%">
-                        <div class="skill-progress-bar"></div>
-                    </div>
-                </div>
+                <button class="view-project">View Project <i class="fas fa-arrow-right"></i></button>
             </div>
-            
-            <div class="skill-category">
-                <h3><i class="fas fa-laptop-code"></i> Web Development</h3>
-                <div class="skill-item">
-                    <div class="skill-info">
-                        <span>HTML & CSS</span>
-                        <span class="skill-level">90%</span>
-                    </div>
-                    <div class="skill-progress" data-width="90%">
-                        <div class="skill-progress-bar"></div>
-                    </div>
-                </div>
-                <div class="skill-item">
-                    <div class="skill-info">
-                        <span>React</span>
-                        <span class="skill-level">80%</span>
-                    </div>
-                    <div class="skill-progress" data-width="80%">
-                        <div class="skill-progress-bar"></div>
-                    </div>
-                </div>
-                <div class="skill-item">
-                    <div class="skill-info">
-                        <span>Node.js</span>
-                        <span class="skill-level">70%</span>
-                    </div>
-                    <div class="skill-progress" data-width="70%">
-                        <div class="skill-progress-bar"></div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="skill-category">
-                <h3><i class="fas fa-cloud"></i> DevOps & Cloud</h3>
-                <div class="skill-item">
-                    <div class="skill-info">
-                        <span>AWS</span>
-                        <span class="skill-level">75%</span>
-                    </div>
-                    <div class="skill-progress" data-width="75%">
-                        <div class="skill-progress-bar"></div>
-                    </div>
-                </div>
-                <div class="skill-item">
-                    <div class="skill-info">
-                        <span>Docker</span>
-                        <span class="skill-level">80%</span>
-                    </div>
-                    <div class="skill-progress" data-width="80%">
-                        <div class="skill-progress-bar"></div>
-                    </div>
-                </div>
-                <div class="skill-item">
-                    <div class="skill-info">
-                        <span>CI/CD</span>
-                        <span class="skill-level">70%</span>
-                    </div>
-                    <div class="skill-progress" data-width="70%">
-                        <div class="skill-progress-bar"></div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="skill-category">
-                <h3><i class="fas fa-brain"></i> Other Skills</h3>
-                <div class="skill-item">
-                    <div class="skill-info">
-                        <span>Git & GitHub</span>
-                        <span class="skill-level">85%</span>
-                    </div>
-                    <div class="skill-progress" data-width="85%">
-                        <div class="skill-progress-bar"></div>
-                    </div>
-                </div>
-                <div class="skill-item">
-                    <div class="skill-info">
-                        <span>Machine Learning</span>
-                        <span class="skill-level">65%</span>
-                    </div>
-                    <div class="skill-progress" data-width="65%">
-                        <div class="skill-progress-bar"></div>
-                    </div>
-                </div>
-                <div class="skill-item">
-                    <div class="skill-info">
-                        <span>Problem Solving</span>
-                        <span class="skill-level">95%</span>
-                    </div>
-                    <div class="skill-progress" data-width="95%">
-                        <div class="skill-progress-bar"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Contact Section -->
-    <section id="contact">
-        <h2>Contact Me</h2>
-        <div class="contact-container">
-            <div class="contact-info">
-                <div class="contact-item">
-                    <div class="contact-icon">
-                        <i class="fas fa-envelope"></i>
+        <!-- Skills Section - Optimized with consistent data attributes -->
+        <section id="skills" class="animation-container">
+            <h2>Skills</h2>
+            <div class="skills-grid">
+                <div class="skill-category">
+                    <h3><i class="fas fa-code"></i> Programming</h3>
+                    <div class="skill-item">
+                        <div class="skill-info">
+                            <span>Python</span>
+                            <span class="skill-level">90%</span>
+                        </div>
+                        <div class="skill-progress" data-width="90%">
+                            <div class="skill-progress-bar"></div>
+                        </div>
                     </div>
-                    <div class="contact-text">
-                        <h3>Email</h3>
-                        <p><a href="mailto:john.doe@example.com">kaleembasha54@gmail.com</a></p>
+                    <div class="skill-item">
+                        <div class="skill-info">
+                            <span>JavaScript</span>
+                            <span class="skill-level">85%</span>
+                        </div>
+                        <div class="skill-progress" data-width="85%">
+                            <div class="skill-progress-bar"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-info">
+                            <span>Java</span>
+                            <span class="skill-level">75%</span>
+                        </div>
+                        <div class="skill-progress" data-width="75%">
+                            <div class="skill-progress-bar"></div>
+                        </div>
                     </div>
                 </div>
-                <div class="contact-item">
-                    <div class="contact-icon">
-                        <i class="fab fa-linkedin-in"></i>
+                
+                <div class="skill-category">
+                    <h3><i class="fas fa-laptop-code"></i> Web Development</h3>
+                    <div class="skill-item">
+                        <div class="skill-info">
+                            <span>HTML & CSS</span>
+                            <span class="skill-level">90%</span>
+                        </div>
+                        <div class="skill-progress" data-width="90%">
+                            <div class="skill-progress-bar"></div>
+                        </div>
                     </div>
-                    <div class="contact-text">
-                        <h3>LinkedIn</h3>
-                        <p><a href="#" target="_blank">kaleembasha2411</a></p>
+                    <div class="skill-item">
+                        <div class="skill-info">
+                            <span>React</span>
+                            <span class="skill-level">80%</span>
+                        </div>
+                        <div class="skill-progress" data-width="80%">
+                            <div class="skill-progress-bar"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-info">
+                            <span>Node.js</span>
+                            <span class="skill-level">70%</span>
+                        </div>
+                        <div class="skill-progress" data-width="70%">
+                            <div class="skill-progress-bar"></div>
+                        </div>
                     </div>
                 </div>
-                <div class="contact-item">
-                    <div class="contact-icon">
-                        <i class="fab fa-github"></i>
+                
+                <div class="skill-category">
+                    <h3><i class="fas fa-cloud"></i> DevOps & Cloud</h3>
+                    <div class="skill-item">
+                        <div class="skill-info">
+                            <span>AWS</span>
+                            <span class="skill-level">75%</span>
+                        </div>
+                        <div class="skill-progress" data-width="75%">
+                            <div class="skill-progress-bar"></div>
+                        </div>
                     </div>
-                    <div class="contact-text">
-                        <h3>GitHub</h3>
-                        <p><a href="#" target="_blank">Mohammadkaleembasha</a></p>
+                    <div class="skill-item">
+                        <div class="skill-info">
+                            <span>Docker</span>
+                            <span class="skill-level">80%</span>
+                        </div>
+                        <div class="skill-progress" data-width="80%">
+                            <div class="skill-progress-bar"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-info">
+                            <span>CI/CD</span>
+                            <span class="skill-level">70%</span>
+                        </div>
+                        <div class="skill-progress" data-width="70%">
+                            <div class="skill-progress-bar"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="skill-category">
+                    <h3><i class="fas fa-brain"></i> Other Skills</h3>
+                    <div class="skill-item">
+                        <div class="skill-info">
+                            <span>Git & GitHub</span>
+                            <span class="skill-level">85%</span>
+                        </div>
+                        <div class="skill-progress" data-width="85%">
+                            <div class="skill-progress-bar"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-info">
+                            <span>Machine Learning</span>
+                            <span class="skill-level">65%</span>
+                        </div>
+                        <div class="skill-progress" data-width="65%">
+                            <div class="skill-progress-bar"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-info">
+                            <span>Problem Solving</span>
+                            <span class="skill-level">95%</span>
+                        </div>
+                        <div class="skill-progress" data-width="95%">
+                            <div class="skill-progress-bar"></div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="contact-form-container">
-                <form class="contact-form">
-                    <div class="form-group">
-                        <input type="text" placeholder="Your Name" required class="neon-input">
-                        <div class="input-glow"></div>
-                    </div>
-                    <div class="form-group">
-                        <input type="email" placeholder="Your Email" required class="neon-input">
-                        <div class="input-glow"></div>
-                    </div>
-                    <div class="form-group">
-                        <textarea placeholder="Your Message" required class="neon-input"></textarea>
-                        <div class="input-glow"></div>
-                    </div>
-                    <button type="submit" class="btn">Send Message</button>
-                </form>
-            </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Footer -->
+        <!-- Contact Section - Add form validation -->
+        <section id="contact" class="animation-container">
+            <h2>Contact Me</h2>
+            <div class="contact-container">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="contact-text">
+                            <h3>Email</h3>
+                            <p><a href="mailto:kaleembasha54@gmail.com">kaleembasha54@gmail.com</a></p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fab fa-linkedin-in"></i>
+                        </div>
+                        <div class="contact-text">
+                            <h3>LinkedIn</h3>
+                            <p><a href="https://linkedin.com/in/kaleembasha2411" target="_blank" rel="noopener">kaleembasha2411</a></p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fab fa-github"></i>
+                        </div>
+                        <div class="contact-text">
+                            <h3>GitHub</h3>
+                            <p><a href="https://github.com/Mohammadkaleembasha" target="_blank" rel="noopener">Mohammadkaleembasha</a></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-form-container">
+                    <form class="contact-form" id="contactForm">
+                        <div class="form-group">
+                            <input type="text" id="name" name="name" placeholder="Your Name" required class="neon-input" minlength="2" maxlength="100">
+                            <div class="input-glow"></div>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" id="email" name="email" placeholder="Your Email" required class="neon-input" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
+                            <div class="input-glow"></div>
+                        </div>
+                        <div class="form-group">
+                            <textarea id="message" name="message" placeholder="Your Message" required class="neon-input" rows="4" minlength="10" maxlength="500"></textarea>
+                            <div class="input-glow"></div>
+                        </div>
+                        <button type="submit" class="btn">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer - Add dynamic year -->
     <footer>
         <div class="container">
             <div class="footer-section">
                 <h3>About Me</h3>
                 <p>AI Engineer and Full Stack Developer passionate about creating innovative solutions and building cutting-edge applications.</p>
                 <div class="social-icons">
-                    <a href="#"><i class="fab fa-github"></i></a>
-                    <a href="#"><i class="fab fa-linkedin"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-medium"></i></a>
+                    <a href="https://github.com/Mohammadkaleembasha" target="_blank" rel="noopener" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                    <a href="https://linkedin.com/in/kaleembasha2411" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://twitter.com" target="_blank" rel="noopener" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="https://medium.com" target="_blank" rel="noopener" aria-label="Medium"><i class="fab fa-medium"></i></a>
                 </div>
             </div>
             
@@ -333,14 +354,19 @@
                 <ul class="footer-links">
                     <li><a href="mailto:kaleembasha54@gmail.com"><i class="fas fa-envelope"></i> kaleembasha54@gmail.com</a></li>
                     <li><a href="tel:+916301065331"><i class="fas fa-phone"></i> +91 6301065331</a></li>
-                    <li><a href="#"><i class="fas fa-map-marker-alt"></i> Andhra Pradesh,India </a></li>
+                    <li><i class="fas fa-map-marker-alt"></i> Andhra Pradesh, India</li>
                 </ul>
             </div>
         </div>
         
         <div class="footer-bottom">
-            <p>&copy; 2025 Mohammadkaleembasha. All Rights Reserved.</p>
+            <p>&copy; <span id="current-year"></span> Mohammad Kaleem. All Rights Reserved.</p>
         </div>
     </footer>
+    
+    <!-- Add inline script to set current year (avoid flash of wrong year) -->
+    <script>
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+    </script>
 </body>
 </html> 

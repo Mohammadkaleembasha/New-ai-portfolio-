@@ -8,52 +8,33 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     try {
-        const themeToggle = document.getElementById('themeToggle');
+        // Cache DOM elements for better performance
+        const domElements = {
+            themeToggle: document.getElementById('themeToggle'),
+            body: document.body,
+            skillBars: document.querySelectorAll('.skill-progress-bar'),
+            skillsSection: document.getElementById('skills'),
+            sections: document.querySelectorAll('section'),
+            navLinks: document.querySelectorAll('.nav-links a'),
+            projectCards: document.querySelectorAll('.project-card'),
+            form: document.querySelector('.contact-form'),
+            grid: document.querySelector('.neon-grid'),
+            scrollIndicator: document.getElementById('scrollIndicator'),
+            scrollTopBtn: document.getElementById('scrollTop'),
+            floatingBg: document.getElementById('floating-background')
+        };
         
-        if (themeToggle) {
-            themeToggle.addEventListener('click', () => {
-                document.body.classList.toggle('dark-mode');
-                themeToggle.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
-                
-                // Save theme preference
-                const isDarkMode = document.body.classList.contains('dark-mode');
-                localStorage.setItem('darkMode', isDarkMode);
-            });
-            
-            // Apply saved theme preference
-            const savedDarkMode = localStorage.getItem('darkMode') === 'true';
-            if (savedDarkMode) {
-                document.body.classList.add('dark-mode');
-                themeToggle.textContent = '☀️';
-            } else {
-                themeToggle.textContent = '🌙';
-            }
-        } else {
-            console.error('Theme toggle element not found. Selector: #themeToggle');
-        }
+        // Initialize modules only if elements exist
+        if (domElements.themeToggle) initThemeToggle(domElements);
+        if (domElements.projectCards.length > 0) setupProjectCards(domElements.projectCards);
+        if (domElements.navLinks.length > 0) setupNavigation(domElements);
+        if (domElements.sections.length > 0) setupSectionAnimations(domElements.sections);
+        if (domElements.skillBars.length > 0) setupSkillsAnimation(domElements);
+        if (domElements.form) setupContactForm(domElements.form);
+        if (domElements.grid) setupNeonGrid(domElements.grid);
+        if (domElements.floatingBg) createFloatingElements(domElements.floatingBg);
         
-        // Setup neon grid effect
-        setupNeonGrid();
-        
-        // Setup contact form effects
-        setupContactForm();
-        
-        // Setup skill animations
-        setupSkillsAnimation();
-        
-        // Add active class to current nav item based on scroll
-        setupNavigation();
-        
-        // Setup section animations
-        setupSectionAnimations();
-        
-        // Setup 3D tilt effect on project cards
-        setupProjectCards();
-
-        // Initialize floating background elements
-        createFloatingElements();
-        
-        // Initialize typewriter effect
+        // Initialize typewriter effects
         initTypewriterEffect();
         
         // Apply text glow effect to section headings
@@ -61,49 +42,115 @@ document.addEventListener('DOMContentLoaded', () => {
             heading.classList.add('text-glow');
         });
         
-        // Setup scroll indicator
-        setupScrollIndicator();
+        // Setup scroll features
+        if (domElements.scrollIndicator) setupScrollIndicator(domElements.scrollIndicator);
+        if (domElements.scrollTopBtn) setupScrollToTop(domElements.scrollTopBtn);
         
-        // Setup scroll to top button
-        setupScrollToTop();
+        // Set up smooth scroll for navigation links - using event delegation
+        document.addEventListener('click', function(e) {
+            const anchor = e.target.closest('a[href^="#"]');
+            if (anchor) {
+                e.preventDefault();
+                const targetId = anchor.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    // Add active class to clicked link
+                    domElements.navLinks.forEach(link => {
+                        link.classList.remove('active');
+                    });
+                    anchor.classList.add('active');
+                    
+                    // Smooth scroll to target
+                    window.scrollTo({
+                        top: targetElement.offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
+            }
+        });
     } catch (error) {
         console.error('Error in initialization:', error.message);
     }
 });
 
-// Setup 3D tilt effect on project cards
-function setupProjectCards() {
-    try {
-        const projectCards = document.querySelectorAll('.project-card');
+// Initialize theme toggle functionality
+function initThemeToggle(elements) {
+    elements.themeToggle.addEventListener('click', () => {
+        elements.body.classList.toggle('dark-mode');
+        elements.themeToggle.textContent = elements.body.classList.contains('dark-mode') ? '☀️' : '🌙';
         
+        // Save theme preference
+        const isDarkMode = elements.body.classList.contains('dark-mode');
+        localStorage.setItem('darkMode', isDarkMode);
+    });
+    
+    // Apply saved theme preference
+    const savedDarkMode = localStorage.getItem('darkMode') === 'true';
+    if (savedDarkMode) {
+        elements.body.classList.add('dark-mode');
+        elements.themeToggle.textContent = '☀️';
+    } else {
+        elements.themeToggle.textContent = '🌙';
+    }
+}
+
+// Setup 3D tilt effect on project cards - Optimized
+function setupProjectCards(projectCards) {
+    try {
         if (projectCards.length === 0) {
             console.warn('Project cards not found');
             return;
         }
         
+        const tiltConfig = {
+            perspectiveValue: 1000,
+            maxRotation: 0.01
+        };
+        
         projectCards.forEach(card => {
             if (!card) return;
             
+            // Use mouseenter/mouseleave for better performance than mousemove
+            let rafId = null;
+            
             card.addEventListener('mousemove', (e) => {
-                const cardRect = card.getBoundingClientRect();
-                const cardCenterX = cardRect.left + cardRect.width / 2;
-                const cardCenterY = cardRect.top + cardRect.height / 2;
+                // Cancel previous animation frame if exists
+                if (rafId) cancelAnimationFrame(rafId);
                 
-                // Calculate mouse position relative to card center
-                const mouseX = e.clientX - cardCenterX;
-                const mouseY = e.clientY - cardCenterY;
-                
-                // Calculate rotation (max 10 degrees)
-                const rotateY = mouseX * 0.01;
-                const rotateX = -mouseY * 0.01;
-                
-                // Apply rotation transform
-                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(10px)`;
+                // Use requestAnimationFrame for smoother animation
+                rafId = requestAnimationFrame(() => {
+                    const cardRect = card.getBoundingClientRect();
+                    const cardCenterX = cardRect.left + cardRect.width / 2;
+                    const cardCenterY = cardRect.top + cardRect.height / 2;
+                    
+                    // Calculate mouse position relative to card center
+                    const mouseX = e.clientX - cardCenterX;
+                    const mouseY = e.clientY - cardCenterY;
+                    
+                    // Calculate rotation (max 10 degrees)
+                    const rotateY = mouseX * tiltConfig.maxRotation;
+                    const rotateX = -mouseY * tiltConfig.maxRotation;
+                    
+                    // Apply transform using translate3d and rotate3d for better performance
+                    card.style.transform = `perspective(${tiltConfig.perspectiveValue}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(10px)`;
+                    
+                    rafId = null;
+                });
             });
             
             card.addEventListener('mouseleave', () => {
-                // Reset transform on mouse leave
+                // Cancel any pending animation frame
+                if (rafId) cancelAnimationFrame(rafId);
+                
+                // Reset transform with animation
+                card.style.transition = 'transform 0.3s ease';
                 card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateZ(0)';
+                
+                // Remove transition after animation completes
+                setTimeout(() => {
+                    card.style.transition = '';
+                }, 300);
             });
             
             // Add click event to view project button
@@ -120,12 +167,9 @@ function setupProjectCards() {
     }
 }
 
-// Setup active nav links
-function setupNavigation() {
+// Setup active nav links - Optimized with IntersectionObserver
+function setupNavigation({sections, navLinks}) {
     try {
-        const sections = document.querySelectorAll('section');
-        const navLinks = document.querySelectorAll('.nav-links a');
-        
         if (sections.length === 0) {
             console.warn('No sections found for navigation');
             return;
@@ -136,80 +180,69 @@ function setupNavigation() {
             return;
         }
         
-        // Add active class to nav links on scroll
-        window.addEventListener('scroll', () => {
-            let current = '';
-            let scrollPos = window.scrollY;
-            
-            sections.forEach(section => {
-                if (!section || typeof section.offsetTop !== 'number') return;
-                
-                const sectionTop = section.offsetTop - 100;
-                const sectionHeight = section.offsetHeight;
-                
-                if (scrollPos >= sectionTop && scrollPos < sectionTop + sectionHeight) {
-                    const id = section.getAttribute('id');
-                    if (id) current = id;
+        // Use IntersectionObserver instead of scroll event
+        const navObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.getAttribute('id');
+                    if (id) {
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === `#${id}`) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
                 }
             });
-            
-            navLinks.forEach(link => {
-                if (!link) return;
-                
-                link.classList.remove('active');
-                const href = link.getAttribute('href');
-                if (href === `#${current}`) {
-                    link.classList.add('active');
-                }
-            });
+        }, {
+            threshold: 0.3,
+            rootMargin: '-100px 0px -100px 0px'
+        });
+        
+        // Observe all sections
+        sections.forEach(section => {
+            if (section) navObserver.observe(section);
         });
     } catch (error) {
         console.error('Error in setupNavigation:', error.message);
     }
 }
 
-// Setup section animations
-function setupSectionAnimations() {
+// Setup section animations - Optimized with IntersectionObserver
+function setupSectionAnimations(sections) {
     try {
-        const sections = document.querySelectorAll('section');
-        
         if (sections.length === 0) {
             console.warn('No sections found for animations');
             return;
         }
         
-        // Initial check for visible sections
-        checkVisibleSections();
-        
-        // Check on scroll
-        window.addEventListener('scroll', () => {
-            checkVisibleSections();
-        });
-        
-        function checkVisibleSections() {
-            const triggerBottom = window.innerHeight * 0.8;
-            
-            sections.forEach(section => {
-                if (!section || !section.getBoundingClientRect) return;
-                
-                const sectionTop = section.getBoundingClientRect().top;
-                
-                if (sectionTop < triggerBottom) {
-                    section.classList.add('visible');
+        // Use IntersectionObserver for better performance
+        const sectionObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    // Unobserve after animation is applied
+                    sectionObserver.unobserve(entry.target);
                 }
             });
-        }
+        }, {
+            threshold: 0.1,
+            rootMargin: '-50px 0px'
+        });
+        
+        // Observe all sections
+        sections.forEach(section => {
+            if (section) sectionObserver.observe(section);
+        });
     } catch (error) {
         console.error('Error in setupSectionAnimations:', error.message);
     }
 }
 
-// Setup skills animation
-function setupSkillsAnimation() {
+// Setup skills animation - Optimized
+function setupSkillsAnimation({skillBars, skillsSection}) {
     try {
-        const skillBars = document.querySelectorAll('.skill-progress-bar');
-        const skillsSection = document.getElementById('skills');
-        
         if (!skillsSection) {
             console.warn('Skills section not found');
             return;
@@ -220,44 +253,42 @@ function setupSkillsAnimation() {
             return;
         }
         
-        // Function to animate skill bars
-        function animateSkills() {
-            skillBars.forEach(bar => {
-                if (!bar || !bar.parentNode) {
-                    console.warn('Invalid skill bar element');
-                    return;
-                }
-                
-                const width = bar.parentNode.dataset.width || '0%';
-                bar.style.width = "0%";
-                
-                setTimeout(() => {
-                    bar.style.width = width;
-                }, 200);
-            });
-        }
-        
-        // Set initial width from HTML data
+        // Cache skill data once to avoid reflow
+        const skillData = [];
         skillBars.forEach(bar => {
             if (!bar || !bar.parentNode) {
                 console.warn('Invalid skill bar element');
                 return;
             }
             
-            const parentWidth = bar.parentNode.dataset.width || '0%';
-            bar.parentNode.dataset.width = parentWidth;
+            skillData.push({
+                bar: bar,
+                width: bar.parentNode.dataset.width || '0%'
+            });
+            
+            // Initialize with zero width
             bar.style.width = "0%";
         });
         
-        // Observe skills section
+        // Function to animate skill bars - use requestAnimationFrame
+        function animateSkills() {
+            requestAnimationFrame(() => {
+                skillData.forEach(data => {
+                    data.bar.style.width = data.width;
+                });
+            });
+        }
+        
+        // Observe skills section - improved with appropriate threshold
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    animateSkills();
+                    // Small delay for visual effect
+                    setTimeout(animateSkills, 100);
                     observer.unobserve(entry.target);
                 }
             });
-        }, { threshold: 0.3 });
+        }, { threshold: 0.2 });
         
         observer.observe(skillsSection);
     } catch (error) {
@@ -265,10 +296,9 @@ function setupSkillsAnimation() {
     }
 }
 
-// Setup contact form effects
-function setupContactForm() {
+// Setup contact form effects - Optimized
+function setupContactForm(form) {
     try {
-        const form = document.querySelector('.contact-form');
         if (!form) {
             console.warn('Contact form not found');
             return;
@@ -281,13 +311,53 @@ function setupContactForm() {
             return;
         }
         
+        // Use object pooling for glint effects to reduce GC pressure
+        const glintPool = [];
+        const POOL_SIZE = 10;
+        
+        // Create glint pool
+        for (let i = 0; i < POOL_SIZE; i++) {
+            const glint = document.createElement('span');
+            glint.classList.add('input-glint');
+            glint.style.display = 'none';
+            document.body.appendChild(glint);
+            glintPool.push({
+                element: glint,
+                inUse: false
+            });
+        }
+        
+        // Get glint from pool
+        function getGlint() {
+            for (let i = 0; i < glintPool.length; i++) {
+                if (!glintPool[i].inUse) {
+                    glintPool[i].inUse = true;
+                    glintPool[i].element.style.display = 'block';
+                    return glintPool[i];
+                }
+            }
+            return null;
+        }
+        
+        // Return glint to pool
+        function returnGlint(glintObj) {
+            glintObj.inUse = false;
+            glintObj.element.style.display = 'none';
+        }
+        
+        // Use throttling for input events to reduce function calls
+        let lastGlintTime = 0;
+        
         inputs.forEach(input => {
             if (!input) return;
             
-            // Create random colored glint effects as user types
+            // Create throttled glint effects as user types
             input.addEventListener('input', (e) => {
-                if (input.value.length > 0 && Math.random() > 0.7) {
+                const now = Date.now();
+                // Throttle to max once per 200ms
+                if (now - lastGlintTime > 200 && input.value.length > 0 && Math.random() > 0.5) {
                     createGlint(input);
+                    lastGlintTime = now;
                 }
             });
             
@@ -334,51 +404,50 @@ function setupContactForm() {
                 }, 3000);
             }, 2000);
         });
+        
+        // Optimized glint creation using pool
+        function createGlint(element) {
+            try {
+                if (!element) {
+                    console.warn('No element provided for glint effect');
+                    return;
+                }
+                
+                const glintObj = getGlint();
+                if (!glintObj) return;
+                
+                const glint = glintObj.element;
+                
+                // Random position within the input
+                const rect = element.getBoundingClientRect();
+                const posX = Math.random() * rect.width;
+                const posY = Math.random() * rect.height;
+                
+                // Random color
+                const colors = ['#ff00c8', '#00eeff', '#00ffbb'];
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                
+                // Position relative to viewport
+                glint.style.left = `${rect.left + posX}px`;
+                glint.style.top = `${rect.top + posY}px`;
+                glint.style.backgroundColor = color;
+                
+                // Remove after animation completes
+                setTimeout(() => {
+                    returnGlint(glintObj);
+                }, 1000);
+            } catch (error) {
+                console.error('Error in createGlint:', error.message);
+            }
+        }
     } catch (error) {
         console.error('Error in setupContactForm:', error.message);
     }
 }
 
-// Create glint effect on input
-function createGlint(element) {
+// Setup neon grid effect - Optimized
+function setupNeonGrid(grid) {
     try {
-        if (!element) {
-            console.warn('No element provided for glint effect');
-            return;
-        }
-        
-        const glint = document.createElement('span');
-        glint.classList.add('input-glint');
-        
-        // Random position within the input
-        const posX = Math.random() * 100;
-        const posY = Math.random() * 100;
-        
-        // Random color
-        const colors = ['#ff00c8', '#00eeff', '#00ffbb'];
-        const color = colors[Math.floor(Math.random() * colors.length)];
-        
-        glint.style.left = `${posX}%`;
-        glint.style.top = `${posY}%`;
-        glint.style.backgroundColor = color;
-        
-        element.appendChild(glint);
-        
-        // Remove after animation completes
-        setTimeout(() => {
-            if (glint && glint.parentNode === element) {
-                element.removeChild(glint);
-            }
-        }, 1000);
-    } catch (error) {
-        console.error('Error in createGlint:', error.message);
-    }
-}
-
-// Setup neon grid effect
-function setupNeonGrid() {
-    try {
-        const grid = document.querySelector('.neon-grid');
         if (!grid) {
             console.warn('Neon grid element not found');
             return;
@@ -388,86 +457,104 @@ function setupNeonGrid() {
         const gridWidth = Math.ceil(window.innerWidth / gridSize);
         const gridHeight = Math.ceil(window.innerHeight / gridSize);
         
-        // Randomize grid cell glow every few seconds
-        setInterval(() => {
-            const glowCells = [];
-            const numGlowCells = Math.floor(Math.random() * 5) + 3;
+        // Create element pool for grid cells
+        const gridCellPool = [];
+        const GRID_POOL_SIZE = 10;  // Max number of glowing cells
+        
+        // Create pool of grid cells
+        for (let i = 0; i < GRID_POOL_SIZE; i++) {
+            const cell = document.createElement('div');
+            cell.classList.add('grid-glow');
+            cell.style.display = 'none';
+            grid.appendChild(cell);
+            gridCellPool.push({
+                element: cell,
+                inUse: false
+            });
+        }
+        
+        // Get cell from pool
+        function getGridCell() {
+            for (let i = 0; i < gridCellPool.length; i++) {
+                if (!gridCellPool[i].inUse) {
+                    gridCellPool[i].inUse = true;
+                    gridCellPool[i].element.style.display = 'block';
+                    return gridCellPool[i];
+                }
+            }
+            return null;
+        }
+        
+        // Return cell to pool
+        function returnGridCell(cellObj) {
+            cellObj.inUse = false;
+            cellObj.element.style.display = 'none';
+        }
+        
+        // Use a longer interval to reduce CPU usage
+        const interval = setInterval(() => {
+            // Reuse existing cells instead of creating new ones
+            gridCellPool.forEach(cellObj => returnGridCell(cellObj));
+            
+            const numGlowCells = Math.floor(Math.random() * 3) + 2; // Reduced number
             
             for (let i = 0; i < numGlowCells; i++) {
                 const x = Math.floor(Math.random() * gridWidth);
                 const y = Math.floor(Math.random() * gridHeight);
-                glowCells.push({ x, y });
+                
+                const cellObj = getGridCell();
+                if (!cellObj) continue;
+                
+                const cell = cellObj.element;
+                cell.style.left = `${x * gridSize}px`;
+                cell.style.top = `${y * gridSize}px`;
+                cell.style.width = `${gridSize}px`;
+                cell.style.height = `${gridSize}px`;
+                cell.style.backgroundColor = Math.random() > 0.5 ? 'rgba(255, 0, 200, 0.3)' : 'rgba(0, 238, 255, 0.3)';
+                
+                // Return to pool after animation
+                setTimeout(() => {
+                    returnGridCell(cellObj);
+                }, 2000);
             }
-            
-            // Remove old glow elements
-            const oldGlowElements = grid.querySelectorAll('.grid-glow');
-            oldGlowElements.forEach(el => {
-                if (el && el.parentNode) {
-                    el.remove();
+        }, 3000); // Increased from 2000ms to 3000ms
+        
+        // Clear interval when page hidden
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                clearInterval(interval);
+            } else {
+                // Only restart if it was previously running
+                if (!interval) {
+                    setupNeonGrid(grid);
                 }
-            });
-            
-            // Add new glow elements
-            glowCells.forEach(cell => {
-                const glowEl = document.createElement('div');
-                glowEl.classList.add('grid-glow');
-                glowEl.style.left = `${cell.x * gridSize}px`;
-                glowEl.style.top = `${cell.y * gridSize}px`;
-                glowEl.style.width = `${gridSize}px`;
-                glowEl.style.height = `${gridSize}px`;
-                glowEl.style.backgroundColor = Math.random() > 0.5 ? 'rgba(255, 0, 200, 0.3)' : 'rgba(0, 238, 255, 0.3)';
-                grid.appendChild(glowEl);
-            });
-        }, 2000);
+            }
+        });
     } catch (error) {
         console.error('Error in setupNeonGrid:', error.message);
     }
 }
 
-// Smooth scroll for navigation links
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function(e) {
-        e.preventDefault();
-        const targetId = this.getAttribute('href');
-        const targetElement = document.querySelector(targetId);
-        
-        if (targetElement) {
-            // Add active class to clicked link
-            document.querySelectorAll('.nav-links a').forEach(link => {
-                link.classList.remove('active');
-            });
-            this.classList.add('active');
-            
-            // Smooth scroll to target
-            window.scrollTo({
-                top: targetElement.offsetTop,
-                behavior: 'smooth'
-            });
-        }
-    });
-});
-
-// Function to create floating background elements
-function createFloatingElements() {
+// Function to create floating background elements - Optimized
+function createFloatingElements(bg) {
     try {
-        const bg = document.getElementById('floating-background');
         if (!bg) {
             console.warn('Floating background element not found');
             return;
         }
         
-        // Clear existing elements
-        bg.innerHTML = '';
+        // Reduce number of elements for better performance
+        const numElements = Math.floor(Math.random() * 5) + 3; // Reduced from 5-15 to 3-8
         
-        // Create random number of elements (5-15)
-        const numElements = Math.floor(Math.random() * 10) + 5;
+        // Use document fragment for better performance
+        const fragment = document.createDocumentFragment();
         
         for (let i = 0; i < numElements; i++) {
             const element = document.createElement('div');
             element.classList.add('floating-element');
             
             // Random size between 50px and 300px
-            const size = Math.floor(Math.random() * 250) + 50;
+            const size = Math.floor(Math.random() * 200) + 50; // Slightly reduced size range
             element.style.width = `${size}px`;
             element.style.height = `${size}px`;
             
@@ -477,8 +564,8 @@ function createFloatingElements() {
             element.style.left = `${posX}%`;
             element.style.top = `${posY}%`;
             
-            // Random animation duration
-            const duration = Math.floor(Math.random() * 30) + 15;
+            // Random animation duration - longer for better performance
+            const duration = Math.floor(Math.random() * 20) + 20; // Increased minimum
             element.style.animationDuration = `${duration}s`;
             
             // Random delay
@@ -489,88 +576,129 @@ function createFloatingElements() {
             const hue = Math.floor(Math.random() * 360);
             element.style.background = `radial-gradient(circle, hsla(${hue}, 100%, 70%, 0.1), transparent 70%)`;
             
-            bg.appendChild(element);
+            fragment.appendChild(element);
         }
+        
+        // Clear existing elements
+        bg.innerHTML = '';
+        
+        // Add all new elements at once
+        bg.appendChild(fragment);
     } catch (error) {
         console.error('Error in createFloatingElements:', error.message);
     }
 }
 
-// Function to initialize typewriter effect
+// Function to initialize typewriter effect - Optimized
 function initTypewriterEffect() {
     try {
         // Apply to home section headline
         const homeHeading = document.querySelector('.home-content h1');
         if (homeHeading) {
-            // Save the original text
-            const originalText = homeHeading.textContent;
-            
-            // Clear the text to prepare for animation
-            homeHeading.textContent = '';
-            
-            // Create a span with the typewriter class
-            const typewriterSpan = document.createElement('span');
-            typewriterSpan.classList.add('typewriter');
-            typewriterSpan.textContent = originalText;
-            
-            // Add the span to the heading
-            homeHeading.appendChild(typewriterSpan);
-        } else {
-            console.warn('Home heading element not found for typewriter effect');
+            // Only apply if not already done
+            if (!homeHeading.querySelector('.typewriter')) {
+                // Save the original text
+                const originalText = homeHeading.textContent;
+                
+                // Clear the text to prepare for animation
+                homeHeading.textContent = '';
+                
+                // Create a span with the typewriter class
+                const typewriterSpan = document.createElement('span');
+                typewriterSpan.classList.add('typewriter');
+                typewriterSpan.textContent = originalText;
+                
+                // Add the span to the heading
+                homeHeading.appendChild(typewriterSpan);
+            }
         }
         
-        // Apply to about section intro
+        // Apply to about section intro - only if element exists
         const aboutIntro = document.querySelector('.about-content p:first-of-type');
-        if (aboutIntro) {
+        if (aboutIntro && !aboutIntro.classList.contains('typewriter')) {
             aboutIntro.classList.add('typewriter');
             // Adjust animation duration based on text length
-            const textLength = aboutIntro.textContent.length || 20;
-            aboutIntro.style.animationDuration = `${textLength * 0.05}s, 0.75s`;
-        } else {
-            console.warn('About intro paragraph not found for typewriter effect');
+            const textLength = aboutIntro.textContent.length;
+            // Limit maximum duration for better performance
+            const duration = Math.min(textLength * 0.03, 3);
+            aboutIntro.style.animationDuration = `${duration}s, 0.75s`;
         }
     } catch (error) {
         console.error('Error in initTypewriterEffect:', error.message);
     }
 }
 
-// Function to setup scroll indicator
-function setupScrollIndicator() {
+// Function to setup scroll indicator - Optimized with throttling
+function setupScrollIndicator(scrollIndicator) {
     try {
-        const scrollIndicator = document.getElementById('scrollIndicator');
         if (!scrollIndicator) {
             console.warn('Scroll indicator element not found');
             return;
         }
         
+        // Throttle scroll events for better performance
+        let lastScrollTime = 0;
+        const scrollThrottleDelay = 100; // ms
+        let ticking = false;
+        
         window.addEventListener('scroll', () => {
+            const now = Date.now();
+            
+            if (!ticking && now - lastScrollTime > scrollThrottleDelay) {
+                ticking = true;
+                lastScrollTime = now;
+                
+                requestAnimationFrame(() => {
+                    updateScrollIndicator();
+                    ticking = false;
+                });
+            }
+        });
+        
+        function updateScrollIndicator() {
             const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
             const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
             if (height <= 0) return; // Prevent division by zero
             
             const scrolled = (winScroll / height) * 100;
             scrollIndicator.style.width = scrolled + '%';
-        });
+        }
+        
+        // Initial update
+        updateScrollIndicator();
     } catch (error) {
         console.error('Error in setupScrollIndicator:', error.message);
     }
 }
 
-// Function to setup scroll to top button
-function setupScrollToTop() {
+// Function to setup scroll to top button - Optimized with throttling
+function setupScrollToTop(scrollTopBtn) {
     try {
-        const scrollTopBtn = document.getElementById('scrollTop');
         if (!scrollTopBtn) {
             console.warn('Scroll to top button not found');
             return;
         }
         
-        // Show button when user scrolls down 300px from the top
+        // Throttle scroll events
+        let lastScrollCheckTime = 0;
+        const scrollCheckThrottleDelay = 200; // ms
+        let scrollCheckTicking = false;
+        
         window.addEventListener('scroll', () => {
-            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
-                scrollTopBtn.classList.add('visible');
-            } else {
-                scrollTopBtn.classList.remove('visible');
+            const now = Date.now();
+            
+            if (!scrollCheckTicking && now - lastScrollCheckTime > scrollCheckThrottleDelay) {
+                scrollCheckTicking = true;
+                lastScrollCheckTime = now;
+                
+                requestAnimationFrame(() => {
+                    if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                        scrollTopBtn.classList.add('visible');
+                    } else {
+                        scrollTopBtn.classList.remove('visible');
+                    }
+                    scrollCheckTicking = false;
+                });
             }
         });
         
