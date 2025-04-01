@@ -5,8 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Portfolio website of Mohammad Kaleem - Developer, AI Engineer, and Cloud Enthusiast">
     <title>Mohammad Kaleem - Portfolio</title>
-    <!-- Preload critical CSS -->
+    
+    <!-- Preload and resource hints -->
+    <link rel="preload" href="style.css" as="style">
     <link rel="stylesheet" href="style.css">
+    <link rel="preload" href="script.js" as="script">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    
     <!-- Load Font Awesome asynchronously -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" media="print" onload="this.media='all'">
     <!-- Add fallback in case JS is disabled -->
@@ -14,53 +20,93 @@
     <!-- Defer non-critical JS -->
     <script src="./script.js" defer></script>
     
-    <!-- Preconnect to CDN for faster loading -->
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-    
-    <!-- Add metadata for SEO -->
-    <meta name="keywords" content="portfolio, web development, programming, python, javascript, developer">
+    <!-- SEO metadata -->
+    <meta name="keywords" content="portfolio, web development, programming, python, javascript, developer, AI engineer, cloud computing">
     <meta name="author" content="Mohammad Kaleem">
     <meta name="theme-color" content="#0f0f2d">
+    
+    <!-- Open Graph / Social Media tags -->
+    <meta property="og:title" content="Mohammad Kaleem - Portfolio">
+    <meta property="og:description" content="AI Engineer and Full Stack Developer portfolio showcasing projects and skills">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://mohammadkaleem.com">
+    <meta property="og:image" content="images/profile.jpg">
+    
+    <!-- Twitter Card tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Mohammad Kaleem - Portfolio">
+    <meta name="twitter:description" content="AI Engineer and Full Stack Developer portfolio">
+    
+    <!-- Security headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; img-src 'self' data:; font-src 'self' https://cdnjs.cloudflare.com;">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
+    
+    <!-- Structured data for SEO -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Mohammad Kaleem",
+        "url": "https://mohammadkaleem.com",
+        "jobTitle": "AI Engineer and Full Stack Developer",
+        "alumniOf": {
+            "@type": "CollegeOrUniversity",
+            "name": "Computer Science"
+        },
+        "knowsAbout": ["Python", "Web Development", "Cloud Computing", "AI", "Machine Learning"],
+        "sameAs": [
+            "https://github.com/Mohammadkaleembasha",
+            "https://linkedin.com/in/kaleembasha2411"
+        ]
+    }
+    </script>
 </head>
 <body class="dark-mode">
+    <!-- Accessibility skip link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
     <!-- Page loading indicator -->
     <div class="page-loader" id="pageLoader">
-        <div class="loader-spinner"></div>
+        <div class="loader-spinner" aria-label="Loading content"></div>
     </div>
 
     <!-- Scroll Indicator -->
-    <div class="scroll-indicator" id="scrollIndicator"></div>
+    <div class="scroll-indicator" id="scrollIndicator" aria-hidden="true"></div>
 
     <!-- Scroll to Top Button -->
     <button class="scroll-top" id="scrollTop" aria-label="Scroll to top">
-        <i class="fas fa-arrow-up"></i>
+        <i class="fas fa-arrow-up" aria-hidden="true"></i>
     </button>
 
     <!-- Floating Background Elements -->
-    <div class="floating-background" id="floating-background"></div>
+    <div class="floating-background" id="floating-background" aria-hidden="true"></div>
     
     <!-- Header Navigation -->
-    <header>
-        <nav>
-            <h1 class="logo">Portfolio</h1>
+    <header role="banner">
+        <nav role="navigation" aria-label="Main navigation">
+            <h1 class="logo">Mohammad Kaleem</h1>
+            <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-label="Toggle navigation menu">
+                <i class="fas fa-bars"></i>
+            </button>
             <ul class="nav-links">
-                <li><a href="#home">Home</a></li>
+                <li><a href="#home" aria-current="page">Home</a></li>
                 <li><a href="#about">About</a></li>
                 <li><a href="#projects">Projects</a></li>
                 <li><a href="#skills">Skills</a></li>
                 <li><a href="#contact">Contact</a></li>
-                <li><button id="themeToggle" aria-label="Toggle theme">☀️</button></li>
+                <li><button id="themeToggle" aria-label="Toggle dark/light theme">☀️</button></li>
             </ul>
         </nav>
     </header>
 
-    <main>
+    <main id="main-content" role="main">
         <!-- Home Section -->
         <section id="home" class="animation-container">
             <div class="home-content">
                 <div class="neon-text-container">
                     <h1>Hi, I'm <span class="highlight-text">Mohammad Kaleem</span></h1>
-                    <p class="typing-text">A passionate developer with expertise in <span class="neon-highlight">Python</span>, <span class="neon-highlight">Web Development</span>, and <span class="neon-highlight">DevOps</span>.</p>
+                    <p class="typing-text">A passionate developer with expertise in <span class="neon-highlight">Python</span>, <span class="neon-highlight">Web Development</span>.</p>
                 </div>
                 <div class="neon-shape"></div>
                 <a href="#projects" class="btn">View My Work</a>
@@ -115,8 +161,9 @@
                     <p>Uses AI to detect personal protective equipment in real-time. Built with Python, OpenCV, and TensorFlow to enhance workplace safety by monitoring proper use of safety equipment.</p>
                     <div class="project-tags">
                         <span>Python</span>
-                        <span>AI</span>
-                        <span>Computer Vision</span>
+                        <span>Yolo V5</span>
+                        <span>Deep Learning</span>
+                        <span>Ultralytics</span>
                     </div>
                 </div>
                 <button class="view-project">View Project <i class="fas fa-arrow-right"></i></button>
