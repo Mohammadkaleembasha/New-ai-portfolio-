@@ -1,129 +1,81 @@
-// Theme Toggle
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('Portfolio website initialized - checking for errors...');
-    
-    // Add global error handler
-    window.addEventListener('error', function(event) {
-        console.error('JavaScript Error:', event.message, 'at', event.filename, 'line', event.lineno);
-    });
-    
-    try {
-        // Cache DOM elements for better performance
-        const domElements = {
-            themeToggle: document.getElementById('themeToggle'),
-            body: document.body,
-            skillBars: document.querySelectorAll('.skill-progress-bar'),
-            skillsSection: document.getElementById('skills'),
-            sections: document.querySelectorAll('section'),
-            navLinks: document.querySelectorAll('.nav-links a'),
-            projectCards: document.querySelectorAll('.project-card'),
-            form: document.querySelector('.contact-form'),
-            grid: document.querySelector('.neon-grid'),
-            scrollIndicator: document.getElementById('scrollIndicator'),
-            scrollTopBtn: document.getElementById('scrollTop'),
-            floatingBg: document.getElementById('floating-background'),
-            header: document.querySelector('header'),
-            menuToggle: document.getElementById('menuToggle'),
-            navMenu: document.querySelector('.nav-links'),
-            pageLoader: document.getElementById('pageLoader')
+// Performance optimization: Use requestAnimationFrame for animations
+const raf = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame;
+
+// Debounce function for performance
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
         };
-        
-        // Initialize modules only if elements exist
-        if (domElements.themeToggle) initThemeToggle(domElements);
-        if (domElements.projectCards.length > 0) {
-            setupProjectCards(domElements.projectCards);
-            setupProjectImageAnimations(domElements.projectCards);
-        }
-        if (domElements.navLinks.length > 0) setupNavigation(domElements);
-        if (domElements.sections.length > 0) setupSectionAnimations(domElements.sections);
-        if (domElements.skillBars.length > 0) setupSkillsAnimation(domElements);
-        if (domElements.form) setupContactForm(domElements.form);
-        if (domElements.grid) setupNeonGrid(domElements.grid);
-        if (domElements.floatingBg) createFloatingElements(domElements.floatingBg);
-        if (domElements.header) setupStickyHeader(domElements.header);
-        if (domElements.menuToggle && domElements.navMenu) setupMobileMenu(domElements);
-        
-        // Initialize typewriter effects
-        initTypewriterEffect();
-        
-        // Apply text glow effect to section headings
-        document.querySelectorAll('section h2').forEach(heading => {
-            heading.classList.add('text-glow');
-        });
-        
-        // Setup scroll features
-        if (domElements.scrollIndicator) setupScrollIndicator(domElements.scrollIndicator);
-        if (domElements.scrollTopBtn) setupScrollToTop(domElements.scrollTopBtn);
-        
-        // Set up smooth scroll for navigation links - using event delegation
-        document.addEventListener('click', function(e) {
-            const anchor = e.target.closest('a[href^="#"]');
-            if (anchor) {
-                e.preventDefault();
-                const targetId = anchor.getAttribute('href');
-                const targetElement = document.querySelector(targetId);
-                
-                if (targetElement) {
-                    // Add active class to clicked link
-                    domElements.navLinks.forEach(link => {
-                        link.classList.remove('active');
-                    });
-                    anchor.classList.add('active');
-                    
-                    // Smooth scroll to target
-                    window.scrollTo({
-                        top: targetElement.offsetTop,
-                        behavior: 'smooth'
-                    });
-                    
-                    // Close mobile menu if open
-                    if (domElements.navMenu && domElements.navMenu.classList.contains('show')) {
-                        domElements.navMenu.classList.remove('show');
-                        if (domElements.menuToggle) {
-                            domElements.menuToggle.setAttribute('aria-expanded', 'false');
-                        }
-                    }
-                }
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Intersection Observer for lazy loading
+const lazyLoadObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const target = entry.target;
+            if (target.dataset.src) {
+                target.src = target.dataset.src;
+                target.removeAttribute('data-src');
             }
-        });
-        
-        // Hide page loader when content is loaded
-        if (domElements.pageLoader) {
-            window.addEventListener('load', () => {
-                domElements.pageLoader.classList.add('hidden');
-                // Add animation to home section
-                const homeSection = document.getElementById('home');
-                if (homeSection) homeSection.classList.add('visible');
-            });
+            if (target.classList.contains('lazy-load')) {
+                target.classList.add('visible');
+            }
+            observer.unobserve(target);
         }
-        
-        // Add ripple effect to buttons
-        addRippleEffect();
-        
-    } catch (error) {
-        console.error('Error in initialization:', error.message);
-    }
+    });
+}, {
+    rootMargin: '50px 0px',
+    threshold: 0.1
 });
 
-// Initialize theme toggle functionality
-function initThemeToggle(elements) {
-    elements.themeToggle.addEventListener('click', () => {
-        elements.body.classList.toggle('dark-mode');
-        elements.themeToggle.textContent = elements.body.classList.contains('dark-mode') ? '☀️' : '🌙';
-        
-        // Save theme preference
-        const isDarkMode = elements.body.classList.contains('dark-mode');
-        localStorage.setItem('darkMode', isDarkMode);
+// Theme Toggle Functionality
+function initThemeToggle() {
+    const themeToggle = document.getElementById('themeToggle');
+    const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+    
+    // Check for saved theme preference or use system preference
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        document.body.classList.toggle('dark-mode', savedTheme === 'dark');
+    } else {
+        document.body.classList.toggle('dark-mode', prefersDarkScheme.matches);
+    }
+    
+    // Update theme toggle button icon
+    updateThemeIcon();
+    
+    // Add click event listener
+    themeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        const isDarkMode = document.body.classList.contains('dark-mode');
+        localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+        updateThemeIcon();
     });
     
-    // Apply saved theme preference
-    const savedDarkMode = localStorage.getItem('darkMode') === 'true';
-    if (savedDarkMode) {
-        elements.body.classList.add('dark-mode');
-        elements.themeToggle.textContent = '☀️';
-    } else {
-        elements.themeToggle.textContent = '🌙';
-    }
+    // Listen for system theme changes
+    prefersDarkScheme.addEventListener('change', (e) => {
+        if (!localStorage.getItem('theme')) {
+            document.body.classList.toggle('dark-mode', e.matches);
+            updateThemeIcon();
+        }
+    });
+}
+
+// Update theme toggle button icon
+function updateThemeIcon() {
+    const themeToggle = document.getElementById('themeToggle');
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    themeToggle.innerHTML = isDarkMode ? 
+        '<i class="fas fa-sun"></i>' : 
+        '<i class="fas fa-moon"></i>';
+    themeToggle.setAttribute('aria-label', 
+        isDarkMode ? 'Switch to light mode' : 'Switch to dark mode');
 }
 
 // Setup 3D tilt effect on project cards - Optimized
@@ -188,8 +140,18 @@ function setupProjectCards(projectCards) {
             const viewBtn = card.querySelector('.view-project');
             if (viewBtn) {
                 viewBtn.addEventListener('click', () => {
-                    // Show confirmation
-                    alert('Project details would open here!');
+                    // Check if this is the portfolio project
+                    const projectTitle = card.querySelector('h3').textContent;
+                    if (projectTitle === 'Personal Portfolio') {
+                        window.open('https://github.com/Mohammadkaleembasha/New-ai-portfolio-', '_blank');
+                    } else if (projectTitle === 'PPE Detection') {
+                        window.open('https://github.com/Mohammadkaleembasha/PPEDETECTION', '_blank');
+                    } else if (projectTitle === 'Hyperglycemia Related Retinal Disorder Prediction') {
+                        window.open('https://github.com/Mohammadkaleembasha/Hyperglycemia-Related-Retinal-Disorder-Prediction', '_blank');
+                    } else {
+                        // Show confirmation for other projects
+                        alert('Project details would open here!');
+                    }
                 });
             }
         });
@@ -397,142 +359,75 @@ function setupContactForm(form) {
             return;
         }
         
-        // Add glowing effect when focus on inputs
-        const inputs = form.querySelectorAll('.neon-input');
-        if (inputs.length === 0) {
-            console.warn('No form inputs found');
-            return;
-        }
-        
-        // Use object pooling for glint effects to reduce GC pressure
-        const glintPool = [];
-        const POOL_SIZE = 10;
-        
-        // Create glint pool
-        for (let i = 0; i < POOL_SIZE; i++) {
-            const glint = document.createElement('span');
-            glint.classList.add('input-glint');
-            glint.style.display = 'none';
-            document.body.appendChild(glint);
-            glintPool.push({
-                element: glint,
-                inUse: false
-            });
-        }
-        
-        // Get glint from pool
-        function getGlint() {
-            for (let i = 0; i < glintPool.length; i++) {
-                if (!glintPool[i].inUse) {
-                    glintPool[i].inUse = true;
-                    glintPool[i].element.style.display = 'block';
-                    return glintPool[i];
-                }
-            }
-            return null;
-        }
-        
-        // Return glint to pool
-        function returnGlint(glintObj) {
-            glintObj.inUse = false;
-            glintObj.element.style.display = 'none';
-        }
-        
-        // Use throttling for input events to reduce function calls
-        let lastGlintTime = 0;
-        
+        const inputs = form.querySelectorAll('input, textarea');
+        const submitBtn = form.querySelector('button[type="submit"]');
+
+        // Add input effects
         inputs.forEach(input => {
-            if (!input) return;
-            
-            // Create throttled glint effects as user types
-            input.addEventListener('input', (e) => {
-                const now = Date.now();
-                // Throttle to max once per 200ms
-                if (now - lastGlintTime > 200 && input.value.length > 0 && Math.random() > 0.5) {
-                    createGlint(input);
-                    lastGlintTime = now;
-                }
-            });
-            
-            // Add special glow effect on focus
             input.addEventListener('focus', () => {
-                const formGroup = input.closest('.form-group');
-                if (formGroup) {
-                    formGroup.classList.add('form-group-focus');
-                }
+                input.parentElement.classList.add('input-focused');
             });
-            
+
             input.addEventListener('blur', () => {
-                const formGroup = input.closest('.form-group');
-                if (formGroup) {
-                    formGroup.classList.remove('form-group-focus');
+                if (!input.value) {
+                    input.parentElement.classList.remove('input-focused');
                 }
             });
         });
-        
-        // Add form submission animation
-        form.addEventListener('submit', (e) => {
+
+        // Handle form submission
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const button = form.querySelector('button');
-            if (!button) return;
             
-            button.innerHTML = 'Sending <span class="sending-dots">...</span>';
-            button.disabled = true;
-            
-            // Simulate sending (would be replaced with actual form submission)
-            setTimeout(() => {
-                const allInputs = form.querySelectorAll('.neon-input');
-                allInputs.forEach(input => {
-                    if (input) input.value = '';
-                });
-                button.innerHTML = 'Message Sent!';
-                
-                // Add success flash
-                form.classList.add('form-success');
-                
-                setTimeout(() => {
-                    form.classList.remove('form-success');
-                    button.innerHTML = 'Send Message';
-                    button.disabled = false;
-                }, 3000);
-            }, 2000);
-        });
-        
-        // Optimized glint creation using pool
-        function createGlint(element) {
+            // Disable submit button and show loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="loading-spinner"></span> Sending...';
+
             try {
-                if (!element) {
-                    console.warn('No element provided for glint effect');
-                    return;
-                }
+                // Get form data
+                const formData = {
+                    name: form.querySelector('input[name="name"]').value,
+                    email: form.querySelector('input[name="email"]').value,
+                    message: form.querySelector('textarea[name="message"]').value
+                };
+
+                // Send email using EmailJS
+                await emailjs.send(
+                    "YOUR_SERVICE_ID", // Replace with your EmailJS service ID
+                    "YOUR_TEMPLATE_ID", // Replace with your EmailJS template ID
+                    {
+                        from_name: formData.name,
+                        from_email: formData.email,
+                        message: formData.message
+                    }
+                );
+
+                // Show success state
+                form.classList.add('success');
+                submitBtn.innerHTML = 'Message Sent!';
                 
-                const glintObj = getGlint();
-                if (!glintObj) return;
-                
-                const glint = glintObj.element;
-                
-                // Random position within the input
-                const rect = element.getBoundingClientRect();
-                const posX = Math.random() * rect.width;
-                const posY = Math.random() * rect.height;
-                
-                // Random color
-                const colors = ['#ff00c8', '#00eeff', '#00ffbb'];
-                const color = colors[Math.floor(Math.random() * colors.length)];
-                
-                // Position relative to viewport
-                glint.style.left = `${rect.left + posX}px`;
-                glint.style.top = `${rect.top + posY}px`;
-                glint.style.backgroundColor = color;
-                
-                // Remove after animation completes
+                // Reset form after 3 seconds
                 setTimeout(() => {
-                    returnGlint(glintObj);
-                }, 1000);
+                    form.reset();
+                    form.classList.remove('success');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'Send Message';
+                    inputs.forEach(input => {
+                        input.parentElement.classList.remove('input-focused');
+                    });
+                }, 3000);
+
             } catch (error) {
-                console.error('Error in createGlint:', error.message);
+                console.error('Error sending email:', error);
+                submitBtn.innerHTML = 'Error! Try Again';
+                submitBtn.disabled = false;
+                
+                // Reset button after 3 seconds
+                setTimeout(() => {
+                    submitBtn.innerHTML = 'Send Message';
+                }, 3000);
             }
-        }
+        });
     } catch (error) {
         console.error('Error in setupContactForm:', error.message);
     }
@@ -725,97 +620,6 @@ function initTypewriterEffect() {
         });
     } catch (error) {
         console.error('Error in initTypewriterEffect:', error.message);
-    }
-}
-
-// Function to setup scroll indicator - Optimized with throttling
-function setupScrollIndicator(scrollIndicator) {
-    try {
-        if (!scrollIndicator) {
-            console.warn('Scroll indicator element not found');
-            return;
-        }
-        
-        // Throttle scroll events for better performance
-        let lastScrollTime = 0;
-        const scrollThrottleDelay = 100; // ms
-        let ticking = false;
-        
-        window.addEventListener('scroll', () => {
-            const now = Date.now();
-            
-            if (!ticking && now - lastScrollTime > scrollThrottleDelay) {
-                ticking = true;
-                lastScrollTime = now;
-                
-                requestAnimationFrame(() => {
-                    updateScrollIndicator();
-                    ticking = false;
-                });
-            }
-        });
-        
-        function updateScrollIndicator() {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            if (height <= 0) return; // Prevent division by zero
-            
-            const scrolled = (winScroll / height) * 100;
-            scrollIndicator.style.width = scrolled + '%';
-        }
-        
-        // Initial update
-        updateScrollIndicator();
-    } catch (error) {
-        console.error('Error in setupScrollIndicator:', error.message);
-    }
-}
-
-// Function to setup scroll to top button - Optimized with throttling
-function setupScrollToTop(scrollTopBtn) {
-    try {
-        if (!scrollTopBtn) {
-            console.warn('Scroll to top button not found');
-            return;
-        }
-        
-        // Throttle scroll events
-        let lastScrollCheckTime = 0;
-        const scrollCheckThrottleDelay = 200; // ms
-        let scrollCheckTicking = false;
-        
-        window.addEventListener('scroll', () => {
-            const now = Date.now();
-            
-            if (!scrollCheckTicking && now - lastScrollCheckTime > scrollCheckThrottleDelay) {
-                scrollCheckTicking = true;
-                lastScrollCheckTime = now;
-                
-                requestAnimationFrame(() => {
-                    if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
-                        scrollTopBtn.classList.add('visible');
-                    } else {
-                        scrollTopBtn.classList.remove('visible');
-                    }
-                    scrollCheckTicking = false;
-                });
-            }
-        });
-        
-        // Scroll to top when button is clicked
-        scrollTopBtn.addEventListener('click', () => {
-            // For modern browsers
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-            
-            // For older browsers
-            document.body.scrollTop = 0; // For Safari
-            document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
-        });
-    } catch (error) {
-        console.error('Error in setupScrollToTop:', error.message);
     }
 }
 
@@ -1037,3 +841,113 @@ function setupProjectImageAnimations(projectCards) {
         console.error('Error in setupProjectImageAnimations:', error.message);
     }
 }
+
+// Main initialization function
+function init() {
+    // Hide page loader and show content
+    const pageLoader = document.getElementById('pageLoader');
+    if (pageLoader) {
+        setTimeout(() => {
+            pageLoader.style.opacity = '0';
+            document.body.style.opacity = '1';
+            setTimeout(() => {
+                pageLoader.style.display = 'none';
+            }, 300);
+        }, 500);
+    } else {
+        document.body.style.opacity = '1';
+    }
+
+    // Initialize theme toggle
+    initThemeToggle();
+
+    // Setup project cards
+    const projectCards = document.querySelectorAll('.project-card');
+    setupProjectCards(projectCards);
+
+    // Setup navigation
+    const sections = document.querySelectorAll('section');
+    const navLinks = document.querySelectorAll('.nav-links a');
+    setupNavigation({sections, navLinks});
+
+    // Setup section animations
+    setupSectionAnimations(sections);
+
+    // Setup skills animation
+    const skillBars = document.querySelectorAll('.skill-progress-bar');
+    const skillsSection = document.getElementById('skills');
+    setupSkillsAnimation({skillBars, skillsSection});
+
+    // Setup contact form
+    const contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+        setupContactForm(contactForm);
+    }
+
+    // Setup neon grid
+    const neonGrid = document.querySelector('.neon-grid');
+    if (neonGrid) {
+        setupNeonGrid(neonGrid);
+    }
+
+    // Setup floating background
+    const floatingBg = document.getElementById('floating-background');
+    if (floatingBg) {
+        createFloatingElements(floatingBg);
+    }
+
+    // Setup typewriter effect
+    initTypewriterEffect();
+
+    // Setup sticky header
+    const header = document.querySelector('header');
+    if (header) {
+        setupStickyHeader(header);
+    }
+
+    // Setup mobile menu
+    const menuToggle = document.getElementById('menuToggle');
+    const navMenu = document.querySelector('.nav-links');
+    if (menuToggle && navMenu) {
+        setupMobileMenu({menuToggle, navMenu});
+    }
+
+    // Add ripple effect to buttons
+    addRippleEffect();
+
+    // Setup project image animations
+    setupProjectImageAnimations(projectCards);
+
+    // Setup scroll indicator
+    const scrollIndicator = document.getElementById('scrollIndicator');
+    if (scrollIndicator) {
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            scrollIndicator.style.width = scrolled + '%';
+        });
+    }
+
+    // Setup scroll to top button
+    const scrollTopBtn = document.getElementById('scrollTop');
+    if (scrollTopBtn) {
+        window.addEventListener('scroll', () => {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                scrollTopBtn.classList.add('visible');
+            } else {
+                scrollTopBtn.classList.remove('visible');
+            }
+        });
+
+        scrollTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    }
+}
+
+// Initialize when DOM is fully loaded
+document.addEventListener('DOMContentLoaded', init);

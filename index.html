@@ -6,17 +6,34 @@
     <meta name="description" content="Portfolio website of Mohammad Kaleem - Developer, AI Engineer, and Cloud Enthusiast">
     <title>Mohammad Kaleem - Portfolio</title>
     
-    <!-- Preload and resource hints -->
+    <!-- Critical CSS inline -->
+    <style>
+        /* Critical path CSS here */
+        body { opacity: 0; transition: opacity 0.3s; }
+        .page-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; display: flex; justify-content: center; align-items: center; }
+        .loader-spinner { width: 50px; height: 50px; border: 3px solid #f3f3f3; border-top: 3px solid #00ff88; border-radius: 50%; animation: spinner 1s linear infinite; }
+        @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+    
+    <!-- Preload critical assets -->
     <link rel="preload" href="style.css" as="style">
-    <link rel="stylesheet" href="style.css">
     <link rel="preload" href="script.js" as="script">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" as="style">
+    
+    <!-- Preconnect to external domains -->
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
     
-    <!-- Load Font Awesome asynchronously -->
+    <!-- Load non-critical CSS asynchronously -->
+    <link rel="stylesheet" href="style.css" media="print" onload="this.media='all'">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" media="print" onload="this.media='all'">
-    <!-- Add fallback in case JS is disabled -->
-    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"></noscript>
+    
+    <!-- Add fallback for CSS -->
+    <noscript>
+        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    </noscript>
+    
     <!-- Defer non-critical JS -->
     <script src="./script.js" defer></script>
     
@@ -58,8 +75,34 @@
         "sameAs": [
             "https://github.com/Mohammadkaleembasha",
             "https://linkedin.com/in/kaleembasha2411"
-        ]
+        ],
+        "worksFor": {
+            "@type": "Organization",
+            "name": "Freelance Developer"
+        },
+        "description": "AI Engineer and Full Stack Developer with expertise in Python, Web Development, and Cloud Computing",
+        "image": "images/profile.jpg",
+        "email": "kaleembasha54@gmail.com",
+        "telephone": "+916301065331",
+        "address": {
+            "@type": "PostalAddress",
+            "addressRegion": "Andhra Pradesh",
+            "addressCountry": "India"
+        }
     }
+    </script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').then(registration => {
+                    console.log('ServiceWorker registration successful');
+                }).catch(err => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
     </script>
 </head>
 <body class="dark-mode">
@@ -106,7 +149,7 @@
             <div class="home-content">
                 <div class="neon-text-container">
                     <h1>Hi, I'm <span class="highlight-text">Mohammad Kaleem</span></h1>
-                    <p class="typing-text">A passionate developer with expertise in <span class="neon-highlight">Python</span>, <span class="neon-highlight">Web Development</span>.</p>
+                    <p class="typing-text">A passionate developer with expertise in <span class="neon-highlight">Python</span>&<span class="neon-highlight">Web Development</span>.</p>
                 </div>
                 <div class="neon-shape"></div>
                 <a href="#projects" class="btn">View My Work</a>
@@ -150,6 +193,25 @@
         <!-- Projects Section - Optimize content loading -->
         <section id="projects" class="animation-container">
             <h2>Projects</h2>
+            <div class="project-card">
+                <div class="project-img-container">
+                    <div class="neon-bg project-img" style="background: linear-gradient(135deg, #00eeff, #ff00c8); display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-eye" style="font-size: 5rem; color: white; text-shadow: 0 0 10px #fff;"></i>
+                    </div>
+                </div>
+                <div class="project-content">
+                    <h3>Hyperglycemia Related Retinal Disorder Prediction</h3>
+                    <p>Developed an AI model to predict retinal disorders related to hyperglycemia using deep learning techniques. The system analyzes retinal images to detect early signs of diabetic retinopathy and other related conditions.</p>
+                    <div class="project-tags">
+                        <span>Python</span>
+                        <span>Deep Learning</span>
+                        <span>Computer Vision</span>
+                        <span>CNN</span>
+                        <span>ViT</span>
+                    </div>
+                </div>
+                <button class="view-project">View Project <i class="fas fa-arrow-right"></i></button>
+            </div>
             <div class="project-card">
                 <div class="project-img-container">
                     <div class="neon-bg project-img" style="background: linear-gradient(135deg, #ff00c8, #00eeff); display: flex; align-items: center; justify-content: center;">
@@ -245,37 +307,6 @@
                     <div class="skill-item">
                         <div class="skill-info">
                             <span>Node.js</span>
-                            <span class="skill-level">70%</span>
-                        </div>
-                        <div class="skill-progress" data-width="70%">
-                            <div class="skill-progress-bar"></div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="skill-category">
-                    <h3><i class="fas fa-cloud"></i> DevOps & Cloud</h3>
-                    <div class="skill-item">
-                        <div class="skill-info">
-                            <span>AWS</span>
-                            <span class="skill-level">75%</span>
-                        </div>
-                        <div class="skill-progress" data-width="75%">
-                            <div class="skill-progress-bar"></div>
-                        </div>
-                    </div>
-                    <div class="skill-item">
-                        <div class="skill-info">
-                            <span>Docker</span>
-                            <span class="skill-level">80%</span>
-                        </div>
-                        <div class="skill-progress" data-width="80%">
-                            <div class="skill-progress-bar"></div>
-                        </div>
-                    </div>
-                    <div class="skill-item">
-                        <div class="skill-info">
-                            <span>CI/CD</span>
                             <span class="skill-level">70%</span>
                         </div>
                         <div class="skill-progress" data-width="70%">
@@ -414,6 +445,12 @@
     <!-- Add inline script to set current year (avoid flash of wrong year) -->
     <script>
         document.getElementById('current-year').textContent = new Date().getFullYear();
+    </script>
+    <script src="https://cdn.emailjs.com/sdk/2.3.2/email.min.js"></script>
+    <script>
+        (function() {
+            emailjs.init("YOUR_PUBLIC_KEY"); // Replace with your EmailJS public key
+        })();
     </script>
 </body>
 </html> 
