@@ -28,7 +28,7 @@ Welcome to my personal portfolio website! This project showcases my skills, proj
 - **Font Awesome Icons**
 
 ## 📸 Screenshots
-![Portfolio Preview](#) (Replace with actual screenshot)
+![Portfolio Preview](#)
 
 ## 📜 Usage
 1. Clone the repository:
