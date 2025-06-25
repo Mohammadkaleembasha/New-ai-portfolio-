@@ -69,7 +69,7 @@ function initThemeToggle() {
         if (!localStorage.getItem('theme')) {
             if (e.matches) {
                 document.body.classList.add('dark-mode');
-            } else {
+    } else {
                 document.body.classList.remove('dark-mode');
             }
             updateThemeIcon();
@@ -161,7 +161,7 @@ function setupProjectCards(projectCards) {
                         window.open('https://github.com/Mohammadkaleembasha/Hyperglycemia-Related-Retinal-Disorder-Prediction', '_blank');
                     } else {
                         // Show confirmation for other projects
-                        alert('Project details would open here!');
+                    alert('Project details would open here!');
                     }
                 });
             }
@@ -378,14 +378,14 @@ function setupContactForm(form) {
             input.addEventListener('focus', () => {
                 input.parentElement.classList.add('input-focused');
             });
-
+            
             input.addEventListener('blur', () => {
                 if (!input.value) {
                     input.parentElement.classList.remove('input-focused');
                 }
             });
         });
-
+        
         // Handle form submission
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
