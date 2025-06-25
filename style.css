@@ -1995,3 +1995,98 @@ footer .container {
     transition: none !important;
     transform: none !important;
 }
+
+/* Responsive Design Enhancements */
+@media (max-width: 768px) {
+    header nav {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .nav-links {
+        flex-direction: column;
+        width: 100%;
+        background: var(--bg-primary);
+        position: absolute;
+        top: 100%;
+        left: 0;
+        display: none;
+    }
+    .nav-links.show {
+        display: flex;
+    }
+    .nav-links li {
+        width: 100%;
+        text-align: left;
+        margin: 0.5rem 0;
+    }
+    .menu-toggle {
+        display: block;
+    }
+    .logo {
+        font-size: 1.5rem;
+    }
+    main {
+        padding: 0 0.5rem;
+    }
+    .about-container, .contact-container {
+        flex-direction: column;
+        gap: 2rem;
+    }
+    .about-image, .about-content {
+        width: 100%;
+        max-width: 100%;
+    }
+    .project-card {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    .project-img-container {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+    .project-content h3 {
+        font-size: 1.1rem;
+    }
+    .project-tags {
+        flex-wrap: wrap;
+        gap: 0.3rem;
+    }
+    .skills-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    .footer-section {
+        width: 100%;
+        margin-bottom: 1.5rem;
+    }
+    .footer-bottom {
+        text-align: center;
+    }
+}
+@media (max-width: 480px) {
+    .logo {
+        font-size: 1.1rem;
+    }
+    h1, h2, h3 {
+        font-size: 1.1rem;
+    }
+    .project-content h3 {
+        font-size: 1rem;
+    }
+    .btn, .view-project {
+        font-size: 0.9rem;
+        padding: 0.5rem 0.8rem;
+    }
+    .project-img-container {
+        min-height: 120px;
+    }
+    .about-image .profile-img {
+        font-size: 3rem !important;
+    }
+    .contact-form {
+        padding: 1rem;
+    }
+}
