@@ -1022,6 +1022,20 @@ section h2 {
     color: #000;
 }
 
+/* Ensure Download APK button is always visible and styled */
+.project-card .btn[download],
+.project-card a[download] {
+    background: #fff !important;
+    color: #222 !important;
+    border: 1px solid #eee;
+}
+.project-card .btn[download]:hover,
+.project-card a[download]:hover {
+    background: #f0f0f0 !important;
+    color: var(--accent-color-pink, #ff00c8) !important;
+    border: 1px solid var(--accent-color-pink, #ff00c8);
+}
+
 @media (max-width: 768px) {
     .project-card {
         flex-direction: column;

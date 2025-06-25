@@ -41,19 +41,25 @@ function initThemeToggle() {
     
     // Check for saved theme preference or use system preference
     const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
-        document.body.classList.toggle('dark-mode', savedTheme === 'dark');
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+    } else if (savedTheme === 'light') {
+        document.body.classList.remove('dark-mode');
     } else {
-        document.body.classList.toggle('dark-mode', prefersDarkScheme.matches);
+        // Use system preference
+        if (prefersDarkScheme.matches) {
+            document.body.classList.add('dark-mode');
+        } else {
+            document.body.classList.remove('dark-mode');
+        }
     }
     
-    // Update theme toggle button icon
+    // Update theme toggle button icon to show the opposite of the current theme
     updateThemeIcon();
     
     // Add click event listener
     themeToggle.addEventListener('click', () => {
-        document.body.classList.toggle('dark-mode');
-        const isDarkMode = document.body.classList.contains('dark-mode');
+        const isDarkMode = document.body.classList.toggle('dark-mode');
         localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
         updateThemeIcon();
     });
@@ -61,19 +67,24 @@ function initThemeToggle() {
     // Listen for system theme changes
     prefersDarkScheme.addEventListener('change', (e) => {
         if (!localStorage.getItem('theme')) {
-            document.body.classList.toggle('dark-mode', e.matches);
+            if (e.matches) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
             updateThemeIcon();
         }
     });
 }
 
-// Update theme toggle button icon
+// Update theme toggle button icon to show the opposite of the current theme
 function updateThemeIcon() {
     const themeToggle = document.getElementById('themeToggle');
     const isDarkMode = document.body.classList.contains('dark-mode');
-    themeToggle.innerHTML = isDarkMode ? 
-        '<i class="fas fa-sun"></i>' : 
-        '<i class="fas fa-moon"></i>';
+    // Show moon icon if currently light, sun icon if currently dark
+    themeToggle.innerHTML = isDarkMode 
+        ? '<i class="fas fa-moon"></i>' 
+        : '<i class="fas fa-sun"></i>';
     themeToggle.setAttribute('aria-label', 
         isDarkMode ? 'Switch to light mode' : 'Switch to dark mode');
 }
