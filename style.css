@@ -1986,3 +1986,12 @@ footer .container {
 #theme-toggle:hover {
     color: var(--accent-color);
 }
+
+/* Remove transitions and transforms from project cards */
+.project-card,
+.project-card:hover,
+.project-card:active,
+.project-card * {
+    transition: none !important;
+    transform: none !important;
+}
